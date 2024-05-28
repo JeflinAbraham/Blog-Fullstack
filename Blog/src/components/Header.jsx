@@ -11,11 +11,13 @@ function Header() {
     const path = useLocation().pathname;
 
     return (
-        <Navbar className='border-b-4'>
-            <Link to='/' className='text-xl dark:text-white'>
+        <Navbar className='border-b-4 border-purple-600' >
+            {/* when clciked on link content, u ll be navigated to home page */}
+            <Link to='/' className='text-sm sm:text-xl'>
                 <span className='p-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>Jef's</span>
                 Blog
             </Link>
+
             <form>
                 <TextInput
                     type='text'
@@ -24,6 +26,7 @@ function Header() {
                     className='hidden lg:inline'
                 />
             </form>
+            
             <Button className='w-12 h-10 lg:hidden' color='gray' pill>
                 <AiOutlineSearch />
             </Button>
