@@ -26,6 +26,7 @@ app.use('/api/auth', authRoutes);
 
 
 //middleware for handling errors
+//in Express.js, error handling middleware functions are defined with four parameters: (err, req, res, next). This signature allows Express to recognize them as error handling middleware functions.
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal server error';
