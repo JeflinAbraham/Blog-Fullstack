@@ -49,7 +49,7 @@ function Signin() {
 
       const data = await res.json();
       if (data.success === false) {
-        disptach(signInFailure("data.message"));
+        disptach(signInFailure(data.message));
       }
       if (res.ok) {
         disptach(signInSuccess(data));
