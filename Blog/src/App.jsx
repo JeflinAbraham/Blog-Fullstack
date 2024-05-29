@@ -19,6 +19,8 @@ function App() {
         <Route path='/About' element={<About />} />
         <Route path='/sign-in' element={<Signin />} />
         <Route path='/sign-up' element={<Signup />} />
+
+        {/* the PrivateRoute component, using Outlet allows you to conditionally render the protected routes based on the authentication state. */}
         <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>

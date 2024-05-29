@@ -31,6 +31,7 @@ function Signin() {
     if (!formData.email || formData.email.trim() == '' || !formData.password) {
 
       //redux store variable error (errorMessage) is updated with the specified payload.
+      console.log("hello there");
       return disptach(signInFailure("please fill all the fields"));
     }
     try {
