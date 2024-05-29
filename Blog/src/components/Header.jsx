@@ -11,10 +11,10 @@ function Header() {
     const path = useLocation().pathname;
 
     return (
-        <Navbar className='border-b-4 border-purple-600' >
+        <Navbar className='border-b-2 p-4 border-red-600 bg-gradient-to-r from-orange-500 via-orange-400 to-yellow-300' >
             {/* when clciked on link content, u ll be navigated to home page */}
-            <Link to='/' className='text-sm sm:text-xl'>
-                <span className='p-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>Jef's</span>
+            <Link to='/' className='text-sm font-bold sm:text-2xl text-gray-800'>
+                <span className='p-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-800 rounded-lg text-white'>JEF's</span>
                 Blog
             </Link>
 
@@ -31,15 +31,15 @@ function Header() {
                 <AiOutlineSearch />
             </Button>
 
-            <Navbar.Collapse>
+            <Navbar.Collapse >
                 <Navbar.Link active={path === '/'} as={'div'}>
-                    <Link to='/'>Home</Link>
+                    <Link to='/' className='font-bold text-base'>Home</Link>
                 </Navbar.Link>
                 <Navbar.Link active={path === '/About'} as={'div'}>
-                    <Link to='/About'>About</Link>
+                    <Link to='/About' className='font-bold text-base'>About</Link>
                 </Navbar.Link>
                 <Navbar.Link active={path === '/Projects'} as={'div'}>
-                    <Link to='/Projects'>Projects</Link>
+                    <Link to='/Projects' className='font-bold text-base'>Blogs</Link>
                 </Navbar.Link>
             </Navbar.Collapse>
 
@@ -48,7 +48,7 @@ function Header() {
                     <FaMoon></FaMoon>
                 </Button>
                 <Link to='/sign-in'>
-                    <Button gradientDuoTone='purpleToBlue' outline>
+                    <Button gradientDuoTone='pinkToOrange' outline>
                         Sign In
                     </Button>
                 </Link>

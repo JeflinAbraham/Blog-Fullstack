@@ -36,7 +36,7 @@ function Signup() {
 
         body: JSON.stringify(formData),
       });
-      
+
       const data = await res.json();
       if (data.success === false) {
         return setErrorMessage(data.message);
@@ -53,20 +53,18 @@ function Signup() {
   
 
   return (
-    <div className='min-h-screen mt-20'>
-      <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
+    <div className='min-h-screen'>
+      <div className='flex p-16 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5 border-t-4 shadow-2xl shadow-slate-700 border-red-600 bg-white mt-20'>
         {/* left */}
         <div className='flex-1'>
 
           <Link to='/' className='font-bold dark:text-white text-4xl'>
-            <span className='p-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-              Jef's
-            </span>
-            Blog
+            <img src='./src/pages/logoblog.png'></img>
           </Link>
 
-          <p className='text-sm mt-5'>
-            You can sign up with your email and password or with Google.
+          <p className='text-lg font-bold ml-5'>Good to See You!</p>
+          <p className='text-sm mt-1 italic ml-5'>
+          Enter your credentials to continue exploring the latest posts and updates tailored for you.
           </p>
 
         </div>
@@ -76,37 +74,37 @@ function Signup() {
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
 
             <div>
-              <Label value='Your username' />
+              <Label value='Enter username' />
               <TextInput
                 type='text'
-                placeholder='Username'
+                placeholder='username'
                 id='username'
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <Label value='Your email' />
+              <Label value='Enter email' />
               <TextInput
                 type='email'
-                placeholder='name@company.com'
+                placeholder='abc@gmail.com'
                 id='email'
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <Label value='Your password' />
+              <Label value='Enter password' />
               <TextInput
                 type='password'
-                placeholder='Password'
+                placeholder='password'
                 id='password'
                 onChange={handleChange}
               />
             </div>
 
             <Button
-              gradientDuoTone='purpleToPink'
+              className='bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600'
               type='submit'
               disabled={loading}
             >
