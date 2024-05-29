@@ -18,7 +18,7 @@ function Header() {
     return (
         <Navbar className='border-b-2 p-4 border-orange-500 ' >
             {/* when clciked on link content, u ll be navigated to home page */}
-            <Link to='/' className='text-sm font-bold sm:text-2xl text-gray-800'>
+            <Link to='/' className='text-sm font-bold sm:text-2xl text-gray-800 dark:text-white'>
                 <span className='p-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-800 rounded-lg text-white'>JEF's</span>
                 Blog
             </Link>

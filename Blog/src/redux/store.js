@@ -4,7 +4,7 @@ import themeReducer from './theme/themeSlice.js'
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-//why redux-persist? when u refresh the page, the values of redux store veriables should still persist.
+//Redux Persist: for persisting the state across page reloads.
 //combineReducers: Combines multiple reducers into a single root reducer.
 const rootReducer = combineReducers({
   user: userReducer,
