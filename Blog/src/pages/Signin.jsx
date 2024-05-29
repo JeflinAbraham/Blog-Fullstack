@@ -3,29 +3,37 @@ import { Link } from 'react-router-dom'
 import { Label, TextInput, Button, Spinner, Alert } from 'flowbite-react'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice.js';
+import { useDispatch, useSelector } from 'react-redux';
 
 function Signin() {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+
+  //This destructures the properties loading and error from the user slice of redux store.
+  //loading will directly store the value of state.user.loading.
+  //error: errorMessage, renames the error property to errorMessage.This means errorMessage will store the value of state.user.error
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
+  const disptach = useDispatch();
 
   //{ ...formData }: This syntax spreads the existing formData object.
   //[e.target.id]: e.target.value: This is the new key-value pair that we want to add or update in the formData object. It uses bracket notation to dynamically set the key based on the id property (e.target.id), and the value is taken from (e.target.value). This allows us to update the state of a specific form field identified by its id with the value entered by the user.
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value});
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   //use async whenever dealing with databases.
   //here we are submitting the user data to the database.
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.email || !formData.password) {
-      return setErrorMessage('Please fill out all fields.');
+    if (!formData.email || formData.email.trim() == '' || !formData.password) {
+
+      //redux store variable error (errorMessage) is updated with the specified payload.
+      return disptach(signInFailure("please fill all the fields"));
     }
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      disptach(signInStart());
       const res = await fetch('/api/auth/signin', {
         //post: This indicates that the client is sending data to the server.
         method: 'POST',
@@ -39,18 +47,17 @@ function Signin() {
 
       const data = await res.json();
       if (data.success === false) {
-        return setErrorMessage(data.message);
+        disptach(signInFailure("data.message"));
       }
-      setLoading(false);
-      if(res.ok) {
+      if (res.ok) {
+        disptach(signInSuccess(data));
         navigate('/');
       }
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      disptach(signInFailure(error.message));
     }
   };
-  
+
 
   return (
     <div className='min-h-screen'>
@@ -64,7 +71,7 @@ function Signin() {
 
           <p className='text-lg font-bold ml-5'>Good to See You!</p>
           <p className='text-sm mt-1 italic ml-5'>
-          Enter your credentials to continue exploring the latest posts and updates tailored for you.
+            Enter your credentials to continue exploring the latest posts and updates tailored for you.
           </p>
 
         </div>
