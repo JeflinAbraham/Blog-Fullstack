@@ -71,7 +71,7 @@ export const signin = async (req, res, next) => {
 
         //if all the credentials are verified, the user should be authenticated (use JWT).
         const token = jwt.sign(
-            { id: validUser._id},
+            { id: validUser._id },
             process.env.JWT_SECRET
         );
 
@@ -82,6 +82,72 @@ export const signin = async (req, res, next) => {
                 httpOnly: true,
             })
             .json(loggedInUser);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const google = async (req, res, next) => {
+    //The req.body object is expected to have properties named email, name, and googlePhotoUrl. Destructuring allows you to extract these properties from the req body and assign them to variables with the same names (email, name, and googlePhotoUrl).
+    //check OAuth component in frontend, the names used in the req body is [email,name,googlePhotoUrl].
+    const { email, name, googlePhotoUrl } = req.body;
+    try {
+        const user = await User.findOne({ email });
+
+        //check if the user already exists, if yes, we authenticate the user.
+        //user needs to be provided with an access token to access the system resources.
+        if (user) {
+            const token = jwt.sign(
+                //the user for which the token is to be generated.
+                { id: user._id },
+
+                //encryption of token using a secret key.
+                process.env.JWT_SECRET
+            );
+            const loggedInUser = await User.findById(user._id).select("-password");
+            res
+                .status(200)
+                .cookie('access_token', token, {
+                    httpOnly: true,
+                })
+                .json(loggedInUser);
+        }
+        else {
+
+            //password is required for signing up, so we will generate a random password for the user.
+            const length = 8;
+            let generatedPassword = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < length; i++) {
+                generatedPassword += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            console.log(generatedPassword);
+            const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+
+
+            const newUser = new User({
+
+                //Jeflin Abraham -> jeflinabraham.
+                username: name.toLowerCase().split(' ').join(''),
+                email,
+                password: hashedPassword,
+                profilePicture: googlePhotoUrl,
+            });
+            await newUser.save();
+
+            //after signing up, directly authenticate the user.
+            const token = jwt.sign(
+                { id: newUser._id},
+                process.env.JWT_SECRET
+            );
+            const loggedInUser = await User.findById(newUser._id).select("-password");
+            res
+                .status(200)
+                .cookie('access_token', token, {
+                    httpOnly: true,
+                })
+                .json(loggedInUser);
+        }
     } catch (error) {
         next(error);
     }
