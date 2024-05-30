@@ -99,7 +99,7 @@ export const google = async (req, res, next) => {
         if (user) {
             const token = jwt.sign(
                 //the user for which the token is to be generated.
-                { id: user._id },
+                { id: user._id }, 
 
                 //encryption of token using a secret key.
                 process.env.JWT_SECRET
@@ -136,6 +136,7 @@ export const google = async (req, res, next) => {
             await newUser.save();
 
             //after signing up, directly authenticate the user.
+            //jwt.sign() generates an accessToken to the user with the specified id.
             const token = jwt.sign(
                 { id: newUser._id},
                 process.env.JWT_SECRET

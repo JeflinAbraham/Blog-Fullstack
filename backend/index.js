@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import cors from 'cors';
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.listen(3000, () => {
     console.log("listening to port 3000!");
 })
 app.use(cors());
+app.use(cookieParser());
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 
