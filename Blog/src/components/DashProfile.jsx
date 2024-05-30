@@ -23,9 +23,10 @@ import {
   signoutFailure,
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 export default function DashProfile() {
-  const { currentUser, error: errormsg } = useSelector((state) => state.user);
+  const { currentUser, error: errormsg, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -123,10 +124,6 @@ export default function DashProfile() {
 
     if (Object.keys(formData).length === 0) {
       setUpdateUserError('No changes made');
-      return;
-    }
-    if (imageFileUploading) {
-      setUpdateUserError('Please wait for image to upload');
       return;
     }
     try {
@@ -253,9 +250,21 @@ export default function DashProfile() {
           placeholder='password'
           onChange={handleChange}
         />
-        <Button type='submit' gradientDuoTone='pinkToOrange' outline>
+        <Button type='submit' gradientDuoTone='pinkToOrange' outline disabled={loading || imageFileUploading}>
           Update
         </Button>
+
+        {/* if the user is admin, display the create-post button */}
+        {currentUser.isAdmin && (
+          <Link to={'/create-post'}>
+            <Button
+              gradientDuoTone='pinkToOrange'
+              className='w-full'
+            >
+              Create a post
+            </Button>
+          </Link>
+        )}
       </form>
 
       <div className='text-red-500 flex justify-between mt-5'>
