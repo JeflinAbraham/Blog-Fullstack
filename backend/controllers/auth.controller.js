@@ -71,7 +71,7 @@ export const signin = async (req, res, next) => {
 
         //if all the credentials are verified, the user should be authenticated (use JWT).
         const token = jwt.sign(
-            { id: validUser._id },
+            { id: validUser._id, isAdmin: validUser.isAdmin },
             process.env.JWT_SECRET
         );
 
@@ -99,7 +99,7 @@ export const google = async (req, res, next) => {
         if (user) {
             const token = jwt.sign(
                 //the user for which the token is to be generated.
-                { id: user._id }, 
+                { id: user._id, isAdmin: user.isAdmin }, 
 
                 //encryption of token using a secret key.
                 process.env.JWT_SECRET
@@ -138,7 +138,7 @@ export const google = async (req, res, next) => {
             //after signing up, directly authenticate the user.
             //jwt.sign() generates an accessToken to the user with the specified id.
             const token = jwt.sign(
-                { id: newUser._id},
+                { id: newUser._id, isAdmin: newUser.isAdmin},
                 process.env.JWT_SECRET
             );
             const loggedInUser = await User.findById(newUser._id).select("-password");
