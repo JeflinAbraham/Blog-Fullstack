@@ -1,5 +1,5 @@
 import express from 'express';
-import {test, updateUser, deleteUser} from '../controllers/user.controller.js';
+import {test, updateUser, deleteUser, signout} from '../controllers/user.controller.js';
 import { verifyToken } from '../utils/verifyUser.js';;
 
 const router = express.Router();
@@ -11,5 +11,6 @@ router.get('/test', test);
 //verifyToken will attatch the authenticated user details to the req body, this ensures the user updates his details only and not someone else's.
 router.put('/update/:userId', verifyToken,updateUser);
 router.delete('/delete/:userId', verifyToken, deleteUser);
+router.post('/signout',signout);
 
 export default router;

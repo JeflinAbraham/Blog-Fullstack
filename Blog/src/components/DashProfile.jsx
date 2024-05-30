@@ -18,6 +18,9 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   deleteUserFailure,
+  signInFailure,
+  signoutSuccess,
+  signoutFailure,
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 
@@ -74,7 +77,7 @@ export default function DashProfile() {
     const storageRef = ref(storage, fileName);
 
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
-    
+
     // uploadTask.on('state_changed', ...): Adds an event listener for the state_changed event on the uploadTask. This event is triggered whenever the state of the upload changes (eg. progress, errors, completion).
     uploadTask.on(
       'state_changed',
@@ -162,13 +165,30 @@ export default function DashProfile() {
       const data = await res.json();
       if (!res.ok) {
         dispatch(deleteUserFailure(data.message));
-      } 
+      }
       else {
         dispatch(deleteUserSuccess());
       }
-    } 
+    }
     catch (error) {
       dispatch(deleteUserFailure(error.message));
+    }
+  };
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(signoutFailure(data.message));
+      } else {
+        dispatch(signoutSuccess());
+      }
+    }
+    catch (error) {
+      signoutFailure(data.message);
     }
   };
 
@@ -240,7 +260,7 @@ export default function DashProfile() {
 
       <div className='text-red-500 flex justify-between mt-5'>
         <span className='cursor-pointer' onClick={() => setShowModal(true)}>Delete Account</span>
-        <span className='cursor-pointer'>Sign Out</span>
+        <span className='cursor-pointer' onClick={handleSignout}>Sign Out</span>
       </div>
 
       {updateUserSuccess && (
@@ -284,8 +304,8 @@ export default function DashProfile() {
       </Modal>
     </div>
 
-    
 
-    
+
+
   );
 }
