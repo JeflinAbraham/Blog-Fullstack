@@ -1,5 +1,6 @@
-import { Navbar,Dropdown,Avatar,TextInput, Button } from 'flowbite-react'
-import React from 'react'
+import { Navbar, Dropdown, Avatar, TextInput, Button, Modal } from 'flowbite-react'
+import { HiOutlineExclamationCircle } from 'react-icons/hi'
+import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AiOutlineSearch } from 'react-icons/ai'
 import { FaMoon, FaSun } from 'react-icons/fa';
@@ -11,29 +12,31 @@ function Header() {
     const path = useLocation().pathname;
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {theme} = useSelector((state) => state.theme);
+    const { theme } = useSelector((state) => state.theme);
 
     // destructuring 
     // const currentUser = useSelector((state) => state.user.currentUser)
     const { currentUser } = useSelector((state) => state.user);
+    const [showModalSignOut, setShowModalSignOut] = useState(false);
 
     const handleSignout = async () => {
         try {
-          const res = await fetch('/api/user/signout', {
-            method: 'POST',
-          });
-          const data = await res.json();
-          if (!res.ok) {
-            dispatch(signoutFailure(data.message));
-          } else {
-            dispatch(signoutSuccess());
-          }
+            const res = await fetch('/api/user/signout', {
+                method: 'POST',
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                dispatch(signoutFailure(data.message));
+            } else {
+                dispatch(signoutSuccess());
+            }
         }
         catch (error) {
-          signoutFailure(data.message);
+            signoutFailure(data.message);
         }
+        setShowModalSignOut(false);
         navigate('/sign-in');
-      };
+    };
 
     return (
         <Navbar className='border-b-2 p-4 border-orange-500 ' >
@@ -69,11 +72,11 @@ function Header() {
             </Navbar.Collapse>
 
             <div className='flex gap-2'>
-                <Button 
-                className='w-12 h-10 hidden sm:inline' color='gray' 
-                pill 
-                onClick={() => dispatch(toggleTheme())}>
-                {theme === 'dark' ? <FaSun /> : <FaMoon />}
+                <Button
+                    className='w-12 h-10 hidden sm:inline' color='gray'
+                    pill
+                    onClick={() => dispatch(toggleTheme())}>
+                    {theme === 'dark' ? <FaSun /> : <FaMoon />}
                 </Button>
 
                 {/* display the sign in button only if the user isn't authenticated */}
@@ -89,12 +92,12 @@ function Header() {
                             <span className='block text-sm'>{currentUser.username}</span>
                             <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
                         </Dropdown.Header>
-                        
+
                         <Link to={'/dashboard?tab=profile'}>
                             <Dropdown.Item>Profile</Dropdown.Item>
                         </Link>
                         <Dropdown.Divider />
-                        <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
+                        <Dropdown.Item onClick={() => setShowModalSignOut(true)}>Sign out</Dropdown.Item>
                     </Dropdown>
                 ) : (
                     <Link to='/sign-in'>
@@ -106,6 +109,29 @@ function Header() {
                 <Navbar.Toggle />
 
             </div>
+            <Modal
+                show={showModalSignOut}
+                onClose={() => setShowModalSignOut(false)}
+                popup
+                size='md'
+            >
+                <Modal.Body className='p-4'>
+                    <div className='text-center'>
+                        <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+                        <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+                            Are you sure you want to sign out?
+                        </h3>
+                        <div className='flex justify-center gap-4'>
+                            <Button color='failure' onClick={handleSignout}>
+                                Yes, Sign out
+                            </Button>
+                            <Button color='gray' onClick={() => setShowModalSignOut(false)}>
+                                No, cancel
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </Navbar>
     )
 }

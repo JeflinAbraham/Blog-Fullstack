@@ -38,6 +38,7 @@ export default function DashProfile() {
   const [formData, setFormData] = useState({});
 
   const [showModal, setShowModal] = useState(false);
+  const [showModalSignOut ,setShowModalSignOut] = useState(false);
 
   const filePickerRef = useRef();
   const dispatch = useDispatch();
@@ -190,7 +191,7 @@ export default function DashProfile() {
   };
 
   return (
-    <div className='max-w-lg mx-auto p-3 w-full'>
+    <div className='max-w-lg mx-auto p-3 w-full border-1 shadow-2xl dark:shadow-gray-800 h-[600px] mt-10'>
       <h1 className='my-7 text-center font-semibold text-3xl'>My profile</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
@@ -269,7 +270,7 @@ export default function DashProfile() {
 
       <div className='text-red-500 flex justify-between mt-5'>
         <span className='cursor-pointer' onClick={() => setShowModal(true)}>Delete Account</span>
-        <span className='cursor-pointer' onClick={handleSignout}>Sign Out</span>
+        <span className='cursor-pointer' onClick={() => setShowModalSignOut(true)}>Sign Out</span>
       </div>
 
       {updateUserSuccess && (
@@ -305,6 +306,31 @@ export default function DashProfile() {
                 Yes, I'm sure
               </Button>
               <Button color='gray' onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+
+      <Modal
+        show={showModalSignOut}
+        onClose={() => setShowModalSignOut(false)}
+        popup
+        size='md'
+      >
+        <Modal.Body className='p-4'>
+          <div className='text-center'>
+            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+              Are you sure you want to sign out?
+            </h3>
+            <div className='flex justify-center gap-4'>
+              <Button color='failure' onClick={handleSignout}>
+                Yes, Sign out
+              </Button>
+              <Button color='gray' onClick={() => setShowModalSignOut(false)}>
                 No, cancel
               </Button>
             </div>
