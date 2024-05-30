@@ -46,29 +46,28 @@ export const updateUser = async (req, res, next) => {
                 errorHandler(400, 'Username can only contain letters and numbers')
             );
         }
-        try {
-            const updatedUser = await User.findByIdAndUpdate(
-                //search in the database for a user whose id matches with req.params.userId
-                req.params.userId,
-                {
-                    $set: {
-                        username: req.body.username,
-                        email: req.body.email,
-                        profilePicture: req.body.profilePicture,
-                        password: req.body.password,
-                    },
-                    //to remove the password field from the document.
-                    $unset: {
-                        password: 1
-                    }
-
+    }
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            //search in the database for a user whose id matches with req.params.userId
+            req.params.userId,
+            {
+                $set: {
+                    username: req.body.username,
+                    email: req.body.email,
+                    profilePicture: req.body.profilePicture,
+                    password: req.body.password,
                 },
-                // to return the most updated user.
-                { new: true }
-            );
-            res.status(200).json(updatedUser);
-        } catch (error) {
-            next(error);
-        }
+                //to remove the password field from the document.
+
+            },
+            // to return the most updated user.
+            { new: true }
+        );
+        const { password, ...rest } = updatedUser._doc;
+        res.status(200).json(rest);
+    } 
+    catch (error) {
+        next(error);
     }
 };
