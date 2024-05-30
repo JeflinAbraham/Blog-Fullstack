@@ -8,6 +8,9 @@ export const verifyToken = (req, res, next) => {
     if (!token) {
         return next(errorHandler(401, 'Unauthorized'));
     }
+
+    // If the token is valid, the callback function will receive the decoded user information.
+    // the decoded user info will contain 'id' property of the user, since 'id' property was used inotrder to sign the token.
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
             return next(errorHandler(401, 'Unauthorized'));

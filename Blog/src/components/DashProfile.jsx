@@ -23,18 +23,24 @@ export default function DashProfile() {
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploading, setImageFileUploading] = useState(false);
+
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
+
   const [formData, setFormData] = useState({});
+
   const filePickerRef = useRef();
   const dispatch = useDispatch();
+
   const handleImageChange = (e) => {
+    // e.target.files is an array contatining the files uploaded by user.
+    // e.target.files[0], we assume user uploaded just one file.
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setImageFileUrl(URL.createObjectURL(file));
     }
   };
+
   useEffect(() => {
     if (imageFile) {
       uploadImage();
@@ -61,8 +67,9 @@ export default function DashProfile() {
     // creates a reference to a specefic location in the firebase storage where the file needs to be stored. 
     const storageRef = ref(storage, fileName);
 
-    // uploadTask.on('state_changed', ...): Adds an event listener for the state_changed event on the uploadTask. This event is triggered whenever the state of the upload changes (eg. progress, errors, completion).
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    
+    // uploadTask.on('state_changed', ...): Adds an event listener for the state_changed event on the uploadTask. This event is triggered whenever the state of the upload changes (eg. progress, errors, completion).
     uploadTask.on(
       'state_changed',
       // snapshot: An object representing the current state of the upload.
@@ -75,7 +82,6 @@ export default function DashProfile() {
         setImageFileUploadProgress(progress.toFixed(0));
       },
       (error) => {
-        console.log("hjii");
         setImageFileUploadProgress(null);
         setImageFile(null);
         setImageFileUrl(null);
@@ -89,12 +95,14 @@ export default function DashProfile() {
           // Updates the state with the download URL, allowing the uploaded file to be accessed via this URL.
           setImageFileUrl(downloadURL);
 
+          // the formData ll have password/username fields if they are updated, along with that we add another field profilePicture to the formData. the form ui is temporarily updated.
           setFormData({ ...formData, profilePicture: downloadURL });
           setImageFileUploading(false);
         });
       }
     );
   };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -104,8 +112,7 @@ export default function DashProfile() {
     setUpdateUserError(null);
     setUpdateUserSuccess(null);
 
-    //setFormData updates formData only when the password/username fields change.
-    if (Object.keys(formData).length === 0 && !imageFile) {
+    if (Object.keys(formData).length === 0) {
       setUpdateUserError('No changes made');
       return;
     }
@@ -115,6 +122,8 @@ export default function DashProfile() {
     }
     try {
       dispatch(updateStart());
+
+      //using the formData(username,password,profilePicture) we update the database.
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: 'PUT',
         headers: {
@@ -135,7 +144,6 @@ export default function DashProfile() {
       setUpdateUserError(error.message);
     }
     setFormData({});
-    setImageFile(null);
   };
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
@@ -147,12 +155,12 @@ export default function DashProfile() {
           ref={filePickerRef}
           hidden
         />
-        {/* image and progress bar */}
         {/* This div acts as a clickable area to trigger the hidden file input element. */}
         <div
           className='relative w-32 h-32 self-center cursor-pointer rounded-full'
           onClick={() => filePickerRef.current.click()}
         >
+          {/* if imageFileUploadProgress != 0, show the circular progress bar */}
           {imageFileUploadProgress && (
             <CircularProgressbar
               value={imageFileUploadProgress || 0}
