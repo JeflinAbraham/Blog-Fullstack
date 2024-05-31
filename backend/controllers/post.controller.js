@@ -33,3 +33,53 @@ export const create = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getposts = async (req, res, next) => {
+    try {
+        /*
+        req.query object contains the query string parameters sent by the client in the URL of an HTTP GET request, eg. http://example.com/posts?startIndex=10&limit=5&order=asc&userId=123&category=tech, In this URL, everything after the ? is the query string, which consists of key-value pairs separated by &.
+        req.query:
+            {
+                startIndex: '10',
+                limit: '5',
+                order: 'asc',
+                userId: '123',
+                category: 'tech'
+            }
+
+        */
+
+        // accesing data from req.query object.
+        // parseInt: string to int conversion.
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const sortDirection = req.query.order === 'asc' ? 1 : -1;
+
+        
+        const posts = await Post.find({
+            ...(req.query.userId && { userId: req.query.userId }),
+            ...(req.query.category && { category: req.query.category }),
+            ...(req.query.slug && { category: req.query.slug }),
+            ...(req.query.postId && { _id: req.query.postId }),
+            ...(req.query.searchTerm && {
+                $or: [
+                    { title: { $regex: req.query.searchTerm, $options: 'i' } },
+                    { content: { $regex: req.query.searchTerm, $options: 'i' } },
+                ],
+            }),
+        })
+            // Sorts the results based on the updatedAt field in the specified direction.
+            .sort({ updatedAt: sortDirection })
+            .skip(startIndex)
+            .limit(limit);
+
+        // Gets the total number of documents in the Post collection.
+        const totalPosts = await Post.countDocuments();
+        res.status(200).json({
+            posts,
+            totalPosts,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
