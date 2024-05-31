@@ -191,7 +191,7 @@ export default function DashProfile() {
   };
 
   return (
-    <div className='max-w-lg mx-auto p-3 w-full border-1 shadow-2xl dark:shadow-gray-800 h-[600px] mt-10'>
+    <div className='max-w-lg mx-auto p-8 w-full border-1 shadow-lg shadow-slate-500 dark:shadow-orange-800 h-[605px] mt-10'>
       <h1 className='my-7 text-center font-semibold text-3xl'>My profile</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input

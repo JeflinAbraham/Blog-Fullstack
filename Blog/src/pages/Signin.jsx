@@ -63,7 +63,7 @@ function Signin() {
 
   return (
     <div className='min-h-screen'>
-      <div className='flex p-16 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5 border-t-4 shadow-2xl shadow-slate-700 border-orange-500 mt-20'>
+      <div className='flex p-16 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5 border-t-4 shadow-xl shadow-slate-700 dark:shadow-gray-800 dark:shadow-2xl border-orange-500 mt-20'> 
         {/* left */}
         <div className='flex-1'>
 
