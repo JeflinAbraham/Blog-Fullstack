@@ -37,7 +37,7 @@ export default function DashSidebar() {
     }
   };
   return (
-    <div className='h-screen'>
+    <div className='w-full md:w-56 md:h-screen'>
       <Sidebar className='w-full md:w-56'>
         <Sidebar.Items>
           <Sidebar.ItemGroup className='flex flex-col gap-1'>
