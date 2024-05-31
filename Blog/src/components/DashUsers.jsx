@@ -11,7 +11,7 @@ export default function DashUsers() {
     const [showMore, setShowMore] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [userIdToDelete, setUserIdToDelete] = useState('');
-
+    const [showErrModal, setShowErrModal] = useState(false);
 
     const fetchUsers = async () => {
         try {
@@ -55,9 +55,22 @@ export default function DashUsers() {
         }
     };
 
-    const handleDeleteUser = async () => { 
-        
-    };
+    const handleDeleteUser = async () => {
+        try {
+            const res = await fetch(`/api/user/adminDeleteUser/${userIdToDelete}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
+            } else {
+                console.log(data.message);
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+        setShowModal(false);
+      };
 
     return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
@@ -101,7 +114,9 @@ export default function DashUsers() {
                                     <Table.Cell>
                                         <span
                                             onClick={() => {
-                                                setShowModal(true);
+                                                //admin shouldn't be deleting himself
+                                                {!user.isAdmin && setShowModal(true)};
+                                                {user.isAdmin && setShowErrModal(true)}
                                                 setUserIdToDelete(user._id);
                                             }}
                                             className='font-medium text-red-600 hover:underline cursor-pointer'
@@ -146,6 +161,24 @@ export default function DashUsers() {
                                 No, cancel
                             </Button>
                         </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
+
+
+            <Modal
+                show={showErrModal}
+                onClose={() => setShowErrModal(false)}
+                popup
+                size='md'
+            >
+                <Modal.Header />
+                <Modal.Body>
+                    <div className='text-center'>
+                        <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+                        <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+                            You are admin, you can't delete yourself
+                        </h3>
                     </div>
                 </Modal.Body>
             </Modal>
