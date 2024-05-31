@@ -96,3 +96,40 @@ export const signout = (req, res, next) => {
         next(error);
     }
 };
+
+
+
+export const getUsers = async (req, res, next) => {
+    //verifyToken middleware will add the user details such as (id,isAdmin) to the req body.
+    if (!req.user.isAdmin) {
+        return next(errorHandler(403, 'You are not allowed to see all users'));
+    }
+    try {
+        // extract data from the query parameters of the url.
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = 9;
+        const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+
+        const users = await User.find()
+            .sort({ createdAt: sortDirection })
+            .skip(startIndex)
+
+            //fetches atmost 9 users.
+            .limit(limit);
+
+        // The { password, ...rest } syntax means "take the password property out of user._doc, and put the remaining properties into a new object called rest".
+        // After all iterations are complete, map returns a new array containing all the rest objects returned in each iteration.
+        const usersWithoutPassword = users.map((user) => {
+            const { password, ...rest } = user._doc;
+            return rest;
+        });
+
+        const totalUsers = await User.countDocuments();
+        res.status(200).json({
+            users: usersWithoutPassword,
+            totalUsers,
+        });
+    } catch (error) {
+        next(error);
+    }
+};

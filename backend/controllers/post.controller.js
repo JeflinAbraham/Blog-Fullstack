@@ -58,7 +58,7 @@ export const getposts = async (req, res, next) => {
         // accesing data from req.query object.
         // parseInt: string to int conversion.
         const startIndex = parseInt(req.query.startIndex) || 0;
-        const limit = parseInt(req.query.limit) || 9;
+        const limit = 9;
         const sortDirection = req.query.order === 'asc' ? 1 : -1;
 
         
