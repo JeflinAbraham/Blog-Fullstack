@@ -8,13 +8,22 @@ import { Link } from 'react-router-dom';
 function DashPosts() {
     const { currentUser } = useSelector((state) => state.user);
     const [userPosts, setUserPosts] = useState([]);
+    const [showMore, setShowMore] = useState(false);
 
     const fetchPosts = async () => {
         try {
             const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
             const data = await res.json();
             if (res.ok) {
+                //data.posts can contain atmost 9 posts (default limit = 9)
                 setUserPosts(data.posts);
+            }
+            console.log(data.posts.length);
+            if (data.posts.length == 9) {
+                setShowMore(true);
+            }
+            else{
+                setShowMore(false);
             }
         }
         catch (error) {
@@ -22,12 +31,36 @@ function DashPosts() {
         }
     };
 
-    //dependency: whenever currentUser value changes i.e whenever a user is authenticated, we check if the user is an admin or not, if yes we fetch all the posts.
+    // the dependency array of useEffect is set to [currentUser]. This means the fetchPosts function will only run when currentUser changes, which typically happens when a user logs in or their authentication status changes.
+
+    // but even when u create a new post, the posts will get updated in the dashboard, that means fetchPosts() is invoked again ?? useeffect ran again?? howww??
+    // its because upon creation of a new post, u are redirected to the new post's URL and when you navigate back to the dashboard, the component remounts, which means the useEffect will run again because the component is being recreated. This is why you see the updated posts.
     useEffect(() => {
         if (currentUser.isAdmin) {
             fetchPosts();
         }
     }, [currentUser]);
+
+
+
+    const handleShowMore = async () => {
+        const startIndex = userPosts.length;
+        try {
+            const res = await fetch(
+                `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
+            );
+            const data = await res.json();
+            if (res.ok) {
+                setUserPosts((prev) => [...prev, ...data.posts]);
+                if (data.posts.length == 9) {
+                    setShowMore(true);
+                }
+                else setShowMore(false);
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
 
     return (
@@ -88,6 +121,13 @@ function DashPosts() {
                             ))}
                         </Table.Body>
                     </Table>
+                    {showMore && (
+                        <button
+                            onClick={handleShowMore}
+                            className='w-full text-teal-500 self-center text-sm py-7'
+                        >
+                            Show more
+                        </button>)}
                 </div>
             ) : (
                 <p>You have no posts yet!</p>
