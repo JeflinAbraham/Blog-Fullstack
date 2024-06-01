@@ -46,7 +46,7 @@ export default function DashUsers() {
                 if (data.users.length === 9) {
                     setShowMore(true);
                 }
-                else{
+                else if(data.users.length < 9){
                     setShowModal(false);
                 }
             }

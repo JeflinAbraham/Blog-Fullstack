@@ -15,7 +15,8 @@ function DashPosts() {
 
     const fetchPosts = async () => {
         try {
-            const res = await fetch(`/api/post/getposts`);
+            const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+            console.log("current user: ", currentUser._id);
             const data = await res.json();
             if (res.ok) {
                 //data.posts can contain atmost 9 posts (default limit = 9)
@@ -26,7 +27,7 @@ function DashPosts() {
             if (data.posts.length == 9) {
                 setShowMore(true);
             }
-            else {
+            else if (data.posts.length < 9) {
                 setShowMore(false);
             }
         }
@@ -111,6 +112,8 @@ function DashPosts() {
                                         {new Date(post.updatedAt).toLocaleDateString()}
                                     </Table.Cell>
 
+                                    {/* when u click on the postImg or postTitle, u ll be navigated to 
+                                        'post/${post.slug}' url, this url ll be rendering the PostPage(check App.jsx)*/}
                                     <Table.Cell>
                                         <Link to={`/post/${post.slug}`}>
                                             <img
@@ -191,3 +194,30 @@ function DashPosts() {
 }
 
 export default DashPosts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

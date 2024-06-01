@@ -42,44 +42,40 @@ export const create = async (req, res, next) => {
 
 export const getposts = async (req, res, next) => {
     try {
-        /*
-        req.query object contains the query string parameters sent by the client in the URL of an HTTP GET request, eg. http://example.com/posts?startIndex=10&limit=5&order=asc&userId=123&category=tech, In this URL, everything after the ? is the query string, which consists of key-value pairs separated by &.
-        req.query:
-            {
-                startIndex: '10',
-                limit: '5',
-                order: 'asc',
-                userId: '123',
-                category: 'tech'
-            }
-
-        */
-
-        // accesing data from req.query object.
-        // parseInt: string to int conversion.
-        const startIndex = parseInt(req.query.startIndex) || 0;
-        const limit = 9;
-        const sortDirection = req.query.order === 'asc' ? 1 : -1;
-
-
-        const posts = await Post.find()
-            // Sorts the results based on the updatedAt field in the specified direction.
-            .sort({ updatedAt: sortDirection })
-            .skip(startIndex)
-            .limit(limit);
-
-        // Gets the total number of documents in the Post collection.
-        const totalPosts = await Post.countDocuments();
-        res.status(200).json({
-            posts,
-            totalPosts,
-        });
+      const startIndex = parseInt(req.query.startIndex) || 0;
+      const limit = parseInt(req.query.limit) || 9;
+      const sortDirection = req.query.order === 'asc' ? 1 : -1;
+      const posts = await Post.find()
+        .sort({ updatedAt: sortDirection })
+        .skip(startIndex)
+        .limit(limit);
+  
+      const totalPosts = await Post.countDocuments();
+  
+      const now = new Date();
+  
+      const oneMonthAgo = new Date(
+        now.getFullYear(),
+        now.getMonth() - 1,
+        now.getDate()
+      );
+  
+      const lastMonthPosts = await Post.countDocuments({
+        createdAt: { $gte: oneMonthAgo },
+      });
+  
+      res.status(200).json({
+        posts,
+        totalPosts,
+        lastMonthPosts,
+      });
     } catch (error) {
-        next(error);
+      next(error);
     }
-};
+  };
 
 export const deletepost = async (req, res, next) => {
+    if(!req.user.isAdmin) return next(errorHandler(401, "unauthorized request, you are not an admin"))
     try {
         await Post.findByIdAndDelete(
             //extract postId from url
