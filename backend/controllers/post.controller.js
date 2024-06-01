@@ -61,19 +61,8 @@ export const getposts = async (req, res, next) => {
         const limit = 9;
         const sortDirection = req.query.order === 'asc' ? 1 : -1;
 
-        
-        const posts = await Post.find({
-            ...(req.query.userId && { userId: req.query.userId }),
-            ...(req.query.category && { category: req.query.category }),
-            ...(req.query.slug && { category: req.query.slug }),
-            ...(req.query.postId && { _id: req.query.postId }),
-            ...(req.query.searchTerm && {
-                $or: [
-                    { title: { $regex: req.query.searchTerm, $options: 'i' } },
-                    { content: { $regex: req.query.searchTerm, $options: 'i' } },
-                ],
-            }),
-        })
+
+        const posts = await Post.find()
             // Sorts the results based on the updatedAt field in the specified direction.
             .sort({ updatedAt: sortDirection })
             .skip(startIndex)
@@ -90,35 +79,35 @@ export const getposts = async (req, res, next) => {
     }
 };
 
-export const deletepost = async (req,res,next) => {
+export const deletepost = async (req, res, next) => {
     try {
         await Post.findByIdAndDelete(
             //extract postId from url
             req.params.postId
         );
         res.status(200).json("the post has been deleted");
-    } 
+    }
     catch (error) {
-        next(error);    
+        next(error);
     }
 };
 
 export const updatepost = async (req, res, next) => {
     try {
-      const updatedPost = await Post.findByIdAndUpdate(
-        req.params.postId,
-        {
-          $set: {
-            title: req.body.title,
-            content: req.body.content,
-            category: req.body.category,
-            image: req.body.image,
-          },
-        },
-        { new: true }
-      );
-      res.status(200).json(updatedPost);
+        const updatedPost = await Post.findByIdAndUpdate(
+            req.params.postId,
+            {
+                $set: {
+                    title: req.body.title,
+                    content: req.body.content,
+                    category: req.body.category,
+                    image: req.body.image,
+                },
+            },
+            { new: true }
+        );
+        res.status(200).json(updatedPost);
     } catch (error) {
-      next(error);
+        next(error);
     }
-  };
+};
