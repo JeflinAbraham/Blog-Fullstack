@@ -161,6 +161,8 @@ export default function CommentSection({ postId }) {
                     {comments.map((comment) => (
                         <Comment key={comment._id}
                             comment={comment}
+
+                            // when u click on the Comment component's like button, onLike(handlLike) is run with comment._id as the parameter.
                             onLike={handleLike}
                         />
                     ))}

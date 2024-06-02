@@ -6,19 +6,21 @@ import { useSelector } from 'react-redux';
 export default function Comment({ comment, onLike }) {
   const [user, setUser] = useState({});
   const { currentUser } = useSelector((state) => state.user);
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await fetch(`/api/user/${comment.userId}`);
-        const data = await res.json();
-        if (res.ok) {
-          setUser(data);
-        }
-      } catch (error) {
-        console.log(error.message);
+  const getUser = async () => {
+    try {
+      const res = await fetch(`/api/user/${comment.userId}`);
+      const data = await res.json();
+      if (res.ok) {
+        setUser(data);
       }
-    };
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  useEffect(() => {
     getUser();
+
+    // whenever the comment changes, we fetch the details of the user who made that comment.
   }, [comment]);
 
 
@@ -44,7 +46,11 @@ export default function Comment({ comment, onLike }) {
         <div className='flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'>
           <button
             type='button'
+
+            // onClick={() => onLike(comment._id)} means when the button is clicked, the onLike function will be called with the comment._id as a parameter.
+            // onLike function is actually handleLike from the CommentSection component.
             onClick={() => onLike(comment._id)}
+
             className={`text-gray-400 hover:text-blue-400 ${currentUser && comment.likes.includes(currentUser._id) && '!text-blue-700'}`}
           >
             <FaThumbsUp />
