@@ -143,3 +143,20 @@ export const adminDeleteUser = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// getUser controller is invoked when u are at '/:userId' url, req.params can extract the value of userId.
+// to identify the users of each comment.
+export const getUser = async (req, res, next) => {
+    try {
+        // all details of the user with the specified id is stored in 'user' variable.
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return next(errorHandler(404, 'User not found'));
+        }
+        const { password, ...rest } = user._doc;
+        res.status(200).json(rest);
+    } catch (error) {
+        next(error);
+    }
+};

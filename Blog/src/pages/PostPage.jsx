@@ -88,6 +88,8 @@ export default function PostPage() {
         className='p-3 max-w-2xl mx-auto w-full post-content'
         dangerouslySetInnerHTML={{ __html: post && post.content }}>
       </div>
+
+      {/* for the comment section i should pass id of the current post as a prop */}
       <CommentSection postId={post._id} />
     </main>
   )

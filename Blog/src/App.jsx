@@ -33,6 +33,8 @@ function App() {
           <Route path='update-post/:postId' element={<UpdatePost/>} />
         </Route>
         <Route path='/Projects' element={<Projects />} />
+
+        {/* how ll u reach to this url? check DashPosts */}
         <Route path='/post/:postslug' element={<PostPage/>} />
 
       </Routes>
