@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { FaThumbsUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
-export default function Comment({ comment, onLike }) {
+export default function Comment({ comment, onLike, onDelete }) {
   const [user, setUser] = useState({});
   const { currentUser } = useSelector((state) => state.user);
   const getUser = async () => {
@@ -58,11 +58,22 @@ export default function Comment({ comment, onLike }) {
           <p className='text-gray-400'>
             {
               comment.numberOfLikes > 0 &&
-              comment.numberOfLikes +
-              ' ' +
-              (comment.numberOfLikes === 1 ? 'like' : 'likes')
+              comment.numberOfLikes + ' ' + (comment.numberOfLikes === 1 ? 'like' : 'likes')
             }
           </p>
+
+          {currentUser &&
+            (currentUser.isAdmin || currentUser._id === comment.userId) && (
+              <div>
+                <button
+                  type='button'
+                  onClick={() => onDelete(comment._id)}
+                  className='text-gray-400 hover:text-red-700'
+                >
+                  Delete
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </div>
