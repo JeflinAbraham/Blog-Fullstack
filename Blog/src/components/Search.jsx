@@ -6,7 +6,7 @@ import PostCard from '../components/PostCard';
 export default function Search() {
     const [sidebarData, setSidebarData] = useState({
         searchTerm: '',
-        category: 'uncategorized',
+        category: '',
         sort: 'desc',
     });
 
@@ -65,7 +65,7 @@ export default function Search() {
     const handleSubmit = (e) => {
         e.preventDefault();
         const urlParams = new URLSearchParams(location.search);
-        urlParams.set('searchTerm', sidebarData.searchTerm);
+        urlParams.set('searchTerm', sidebarData.searchTerm || searchTermFromUrl);
         urlParams.set('sort', sidebarData.sort);
         urlParams.set('category', sidebarData.category);
         const searchQuery = urlParams.toString();
