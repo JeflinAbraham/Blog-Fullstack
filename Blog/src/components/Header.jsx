@@ -1,6 +1,6 @@
 import { Navbar, Dropdown, Avatar, TextInput, Button, Modal } from 'flowbite-react'
 import { HiOutlineExclamationCircle } from 'react-icons/hi'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AiOutlineSearch } from 'react-icons/ai'
 import { FaMoon, FaSun } from 'react-icons/fa';
@@ -13,11 +13,27 @@ function Header() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { theme } = useSelector((state) => state.theme);
-
+    
     // destructuring 
     // const currentUser = useSelector((state) => state.user.currentUser)
     const { currentUser } = useSelector((state) => state.user);
     const [showModalSignOut, setShowModalSignOut] = useState(false);
+    
+
+    // search feature
+    // the value of 'searchTerm' parameter from the URL is extracted and assigned to searchTerm useState variable.
+    const [searchTerm, setSearchTerm] = useState('');
+    const location = useLocation();
+    useEffect(() => {
+      const urlParams = new URLSearchParams(location.search);
+      const searchTermFromUrl = urlParams.get('searchTerm');
+      if (searchTermFromUrl) {
+        setSearchTerm(searchTermFromUrl);
+      }
+      console.log(searchTerm);
+
+      // location.search = '?searchTerm=xxx'
+    },[location.search]);
 
     const handleSignout = async () => {
         try {
@@ -38,6 +54,13 @@ function Header() {
         navigate('/sign-in');
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const urlParams = new URLSearchParams(location.search);
+        urlParams.set('searchTerm', searchTerm);
+        navigate(`/search/?searchTerm=${searchTerm}`);
+    }
+
     return (
         <Navbar className='border-b-2 p-4 border-orange-500 ' >
             {/* when clciked on link content, u ll be navigated to home page */}
@@ -46,12 +69,16 @@ function Header() {
                 Blog
             </Link>
 
-            <form>
+            <form onSubmit={handleSubmit}>
                 <TextInput
                     type='text'
                     placeholder='Search...'
                     rightIcon={AiOutlineSearch}
                     className='hidden lg:inline'
+                    value={searchTerm}
+
+                    // searchTerm parameter in the url should change based on the text value.
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </form>
 
@@ -66,8 +93,8 @@ function Header() {
                 <Navbar.Link active={path === '/About'} as={'div'}>
                     <Link to='/About' className='font-bold text-base p-3 rounded-full'>About</Link>
                 </Navbar.Link>
-                <Navbar.Link active={path === '/Projects'} as={'div'}>
-                    <Link to='/Projects' className='font-bold text-base p-3 rounded-full'>Blogs</Link>
+                <Navbar.Link active={path === '/Blogs'} as={'div'}>
+                    <Link to='/Blogs' className='font-bold text-base p-3 rounded-full'>Blogs</Link>
                 </Navbar.Link>
             </Navbar.Collapse>
 
