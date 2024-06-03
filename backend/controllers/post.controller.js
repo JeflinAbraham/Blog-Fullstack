@@ -44,9 +44,20 @@ export const getposts = async (req, res, next) => {
     try {
         const startIndex = parseInt(req.query.startIndex) || 0;
         const limit = parseInt(req.query.limit) || 9;
-        const sortDirection = req.query.order === 'asc' ? 1 : -1;
-        const posts = await Post.find()
-            .sort({ updatedAt: sortDirection })
+        const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+        const posts = await Post.find({
+            ...(req.query.userId && { userId: req.query.userId }),
+            ...(req.query.category && { category: req.query.category }),
+            ...(req.query.slug && { slug: req.query.slug }),
+            ...(req.query.postId && { _id: req.query.postId }),
+            ...(req.query.searchTerm && {
+                $or: [
+                    { title: { $regex: req.query.searchTerm, $options: 'i' } },
+                    { content: { $regex: req.query.searchTerm, $options: 'i' } },
+                ],
+            }),
+        })
+            .sort({ createdAt: sortDirection })
             .skip(startIndex)
             .limit(limit);
 
@@ -64,14 +75,19 @@ export const getposts = async (req, res, next) => {
 export const getpost = async (req, res, next) => {
     const postSlug = req.params.postSlug;
     try {
-        const post = await Post.findOne({slug: postSlug});
-        if(!post) {
+        /*
+        const post = await Post.findOne({postSlug});
+        When you use findOne({ postSlug }), MongoDB is looking for a document where the field name is postSlug and its value is equal to the value of postSlug variable.  However, if your field in the database is named slug (or something else), you need to query using that field name.
+        
+        */
+        const post = await Post.findOne({ slug: postSlug });
+        if (!post) {
             return next(errorHandler(404, "post is not found"));
         }
         res.status(200).json({
             post: post
         })
-    } 
+    }
     catch (error) {
         next(error);
     }
@@ -110,3 +126,22 @@ export const updatepost = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// /getSearchPost/:searchTerm
+// export const getSearchPost = async (req, res, next) => {
+//     const searchTerm = req.params.searchTerm;
+//     try {
+//         const posts = await Post.find({category: searchTerm});
+//         if(posts.length == 0){
+//             return next(errorHandler(401,"search not found"));
+//         }
+//         res.status(200).json({
+//             posts: posts
+//         })
+//     }
+//     catch (error) {
+//         return next(error);
+//     }
+// }
+
