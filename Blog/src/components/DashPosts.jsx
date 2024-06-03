@@ -16,12 +16,10 @@ function DashPosts() {
     const fetchPosts = async () => {
         try {
             const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
-            console.log("current user: ", currentUser._id);
             const data = await res.json();
             if (res.ok) {
                 //data.posts can contain atmost 9 posts (default limit = 9)
                 setUserPosts(data.posts);
-                console.log(userPosts);
             }
             console.log(data.posts.length);
             if (data.posts.length == 9) {
@@ -106,8 +104,8 @@ function DashPosts() {
 
 
                         <Table.Body>
-                            {userPosts.map((post) => (
-                                <Table.Row className='bg-white dark:bg-gray-800'>
+                            { userPosts.map((post) => (
+                                <Table.Row className='bg-white dark:bg-gray-800' key={post._id}>
                                     <Table.Cell>
                                         {new Date(post.updatedAt).toLocaleDateString()}
                                     </Table.Cell>
@@ -133,6 +131,7 @@ function DashPosts() {
                                     </Table.Cell>
 
                                     <Table.Cell>{post.category}</Table.Cell>
+                                    
 
                                     <Table.Cell>
                                         <span className='text-red-700 hover:underline cursor-pointer'

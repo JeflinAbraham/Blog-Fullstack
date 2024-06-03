@@ -42,40 +42,43 @@ export const create = async (req, res, next) => {
 
 export const getposts = async (req, res, next) => {
     try {
-      const startIndex = parseInt(req.query.startIndex) || 0;
-      const limit = parseInt(req.query.limit) || 9;
-      const sortDirection = req.query.order === 'asc' ? 1 : -1;
-      const posts = await Post.find()
-        .sort({ updatedAt: sortDirection })
-        .skip(startIndex)
-        .limit(limit);
-  
-      const totalPosts = await Post.countDocuments();
-  
-      const now = new Date();
-  
-      const oneMonthAgo = new Date(
-        now.getFullYear(),
-        now.getMonth() - 1,
-        now.getDate()
-      );
-  
-      const lastMonthPosts = await Post.countDocuments({
-        createdAt: { $gte: oneMonthAgo },
-      });
-  
-      res.status(200).json({
-        posts,
-        totalPosts,
-        lastMonthPosts,
-      });
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const sortDirection = req.query.order === 'asc' ? 1 : -1;
+        const posts = await Post.find()
+            .sort({ updatedAt: sortDirection })
+            .skip(startIndex)
+            .limit(limit);
+
+        const totalPosts = await Post.countDocuments();
+        res.status(200).json({
+            posts,
+            totalPosts,
+        });
     } catch (error) {
-      next(error);
+        next(error);
     }
-  };
+};
+
+// this controller is invoked when u ar at /getpost/:postSlug url, req.params can extract the value of postSlug from the url.
+export const getpost = async (req, res, next) => {
+    const postSlug = req.params.postSlug;
+    try {
+        const post = await Post.findOne({slug: postSlug});
+        if(!post) {
+            return next(errorHandler(404, "post is not found"));
+        }
+        res.status(200).json({
+            post: post
+        })
+    } 
+    catch (error) {
+        next(error);
+    }
+}
 
 export const deletepost = async (req, res, next) => {
-    if(!req.user.isAdmin) return next(errorHandler(401, "unauthorized request, you are not an admin"))
+    if (!req.user.isAdmin) return next(errorHandler(401, "unauthorized request, you are not an admin"))
     try {
         await Post.findByIdAndDelete(
             //extract postId from url

@@ -6,7 +6,8 @@ import CommentSection from '../components/CommentSection';
 export default function PostPage() {
   // when u r at postPage, we ll have post/:postSlug url, useParams will extract the value of postSlug.
   // why postSlug? check the routes defined in App.jsx
-  const { postSlug } = useParams();
+  const { postslug } = useParams();
+  console.log(postslug);
 
   //importance of loading in conditional rendering
   /*
@@ -31,8 +32,7 @@ export default function PostPage() {
       setLoading(true);
 
       //we fetch the post with this slug.
-      const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
-
+      const res = await fetch(`/api/post/getpost/${postslug}`);
       const data = await res.json();
       if (!res.ok) {
         setError(true);
@@ -41,7 +41,8 @@ export default function PostPage() {
       }
       if (res.ok) {
         // every post has a unique slug, so data.posts.length ll be always 1.
-        setPost(data.posts[0]);
+        setPost(data.post);
+        console.log(data);
         setLoading(false);
         setError(false);
       }
@@ -54,7 +55,7 @@ export default function PostPage() {
     fetchPost();
 
     //everytime the postSlug changes, we fetch the post with that slug.
-  }, [postSlug]);
+  }, [postslug]);
 
 
   if (loading)
