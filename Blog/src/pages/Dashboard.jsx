@@ -4,6 +4,7 @@ import DashSidebar from '../components/DashSidebar';
 import DashProfile from '../components/DashProfile';
 import DashPosts from '../components/DashPosts';
 import DashUsers from '../components/DashUsers';
+import DashboardOverview from '../components/DashboardOverview';
 
 export default function Dashboard() {
   // useLocation(): to get the location object.
@@ -26,7 +27,7 @@ export default function Dashboard() {
     //urlParams.get('tab') retrieves the value of the tab parameter from the query string. If the URL is http://localhost:3000/dashboard?tab=profile,
     //location.search is ?tab=profile
     //urlParams is a key-value pair, tab: profile
-    //tabFromUrl is profile
+    //tabFromUrl is assigned the value corresponding to tab key.
     const tabFromUrl = urlParams.get('tab');
     if (tabFromUrl) {
       setTab(tabFromUrl);
@@ -48,6 +49,9 @@ export default function Dashboard() {
 
       {/* users */}
       {tab === 'users' && <DashUsers/>}
+
+      {/* overview */}
+      {tab === 'overview' && <DashboardOverview/>}
     </div>
   );
 }

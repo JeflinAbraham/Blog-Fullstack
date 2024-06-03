@@ -1,5 +1,5 @@
 import { Sidebar } from 'flowbite-react';
-import { HiUser, HiArrowSmRight, HiOutlineExclamationCircle, HiDocumentText, HiOutlineUserGroup } from 'react-icons/hi';
+import { HiUser, HiArrowSmRight, HiOutlineExclamationCircle, HiDocumentText, HiOutlineUserGroup, HiChartPie,HiAnnotation } from 'react-icons/hi';
 import { Modal, Button } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -58,7 +58,15 @@ export default function DashSidebar() {
       <Sidebar className='w-full md:w-56'>
         <Sidebar.Items>
           <Sidebar.ItemGroup className='flex flex-col gap-1'>
-
+            <Link to='/dashboard?tab=overview'>
+              <Sidebar.Item
+                active={tab === 'overview'}
+                icon={HiChartPie}
+                as='div'
+              >
+                Overview
+              </Sidebar.Item>
+            </Link>
             <Link to='/dashboard?tab=profile'>
               <Sidebar.Item
                 active={tab === 'profile'}
@@ -89,6 +97,7 @@ export default function DashSidebar() {
                 </Sidebar.Item>
               </Link>
             )}
+
 
             <Sidebar.Item icon={HiArrowSmRight} className='cursor-pointer' onClick={() => setShowModalSignOut(true)}>
               Sign Out
