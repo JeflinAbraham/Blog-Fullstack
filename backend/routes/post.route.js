@@ -8,6 +8,7 @@ const router = express.Router();
 router.post('/create', verifyToken, create)
 router.get('/getposts',getposts);
 router.get('/getpost/:postSlug', getpost);
+// router.get('/getSearchPost/:searchTerm', getSearchPost);
 router.delete('/deletepost/:postId',verifyToken, deletepost);
 router.put('/update-post/:postId', updatepost);
 

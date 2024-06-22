@@ -21,7 +21,7 @@ export default function CommentSection({ postId }) {
             const res = await fetch(`/api/comment/getPostComments/${postId}`);
             const data = await res.json();
             if (res.ok) {
-                setComments(data);
+                setComments(data.comments);
             }
         } catch (error) {
             console.log(error.message);

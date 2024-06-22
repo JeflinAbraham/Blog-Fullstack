@@ -104,17 +104,18 @@ export const getUsers = async (req, res, next) => {
     if (!req.user.isAdmin) {
         return next(errorHandler(403, 'You are not allowed to see all users'));
     }
+
     try {
         // extract data from the query parameters of the url.
         const startIndex = parseInt(req.query.startIndex) || 0;
-        const limit = 9;
+        const limit = parseInt(req.query.limit) || 9;
         const sortDirection = req.query.sort === 'asc' ? 1 : -1;
 
         const users = await User.find()
             .sort({ createdAt: sortDirection })
             .skip(startIndex)
 
-            //fetches atmost 9 users.
+            //fetches atmost 'limit' users.
             .limit(limit);
 
         // The { password, ...rest } syntax means "take the password property out of user._doc, and put the remaining properties into a new object called rest".
@@ -160,3 +161,26 @@ export const getUser = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// export const makeAdmin = async (req, res, next) => {
+//     //check if admin
+//     if(!req.user.isAdmin){
+//         return next(errorHandler(404, "unauthorized"));
+//     }
+//     try {
+//         const userMadeAdmin = await User.findByIdAndUpdate(
+//             req.params.userId,
+//             {
+//                 $set: {
+//                     isAdmin: true,
+//                 },
+//             },
+//             { new: true }
+//         );
+//         res.status(200).json(userMadeAdmin);
+//     } 
+//     catch (error) {
+//         next(error);
+//     }
+// }

@@ -26,7 +26,11 @@ export const getPostComments = async (req, res, next) => {
       postId
     })
       .sort({ createdAt: -1 });
-    res.status(200).json(comments);
+    res.status(200).json({
+      comments,
+      totalPostComments: comments.length,
+
+    });
   } catch (error) {
     next(error);
   }
@@ -50,7 +54,7 @@ export const likeComment = async (req, res, next) => {
     if (userIndex === -1) {
       comment.numberOfLikes += 1;
       comment.likes.push(req.user.id);
-    } 
+    }
 
     else {
       comment.numberOfLikes -= 1;
@@ -75,12 +79,12 @@ export const deleteComment = async (req, res, next) => {
     // the admin can delete any comment.
     // normal users can only delete their own comments.
     if (comment.userId !== req.user.id) {
-      if(!req.user.isAdmin){
+      if (!req.user.isAdmin) {
         return next(errorHandler(403, 'You are not allowed to delete this comment'));
       }
     }
 
-    
+
     await Comment.findByIdAndDelete(req.params.commentId);
     res.status(200).json('Comment has been deleted');
   } catch (error) {
